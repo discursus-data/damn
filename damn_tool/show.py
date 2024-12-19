@@ -195,6 +195,7 @@ def get_orchestrator_data(orchestrator_connector, asset):
 
 def get_data_warehouse_data(data_warehouse_connector, asset):
     asset = asset.lower()  # Make sure the asset name is lower case
+    dataset_name = asset.split("/")[0]  # Get the last section after splitting by '/'
     asset_name = asset.split("/")[-1]  # Get the last section after splitting by '/'
 
     sql = None
@@ -215,27 +216,21 @@ def get_data_warehouse_data(data_warehouse_connector, asset):
                 creation_time as created,
                 null as last_altered
 
-            from `{data_warehouse_connector.config['project']}.{asset_name}.split("/")[0].INFORMATION_SCHEMA.TABLES`
-            WHERE LOWER(table_name) = '{asset_name}.split("/")[1]'
+            from `{data_warehouse_connector.config['project']}.{dataset_name}.INFORMATION_SCHEMA.TABLES`
+            WHERE LOWER(table_name) = '{asset_name}'
         """
 
     result, description = data_warehouse_connector.execute(sql)
     data_warehouse_connector.close()
 
-    if result is not None:
-        result_dict = dict(zip([column[0] for column in description], result))
+    # Debug prints
+    if result is not None and isinstance(result, list) and isinstance(result[0], dict):
+        result_dict = result[0]
         return {
-            "table_schema": result_dict.get("table_schema", None),
-            "table_type": result_dict.get("table_type", None),
-            "created": result_dict.get("created", None),
-            "last_altered": result_dict.get("last_altered", None),
-        }
-    else:
-        return {
-            "table_schema": None,
-            "table_type": None,
-            "created": None,
-            "last_altered": None,
+            "table_schema": result_dict.get("table_schema"),
+            "table_type": result_dict.get("table_type"),
+            "created": result_dict.get("created"),
+            "last_altered": result_dict.get("last_altered"),
         }
 
 
