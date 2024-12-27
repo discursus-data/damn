@@ -1,14 +1,14 @@
-    ████████▄     ▄████████   ▄▄▄▄███▄▄▄▄   ███▄▄▄▄   
-    ███   ▀███   ███    ███ ▄██▀▀▀███▀▀▀██▄ ███▀▀▀██▄ 
-    ███    ███   ███    ███ ███   ███   ███ ███   ███ 
-    ███    ███   ███    ███ ███   ███   ███ ███   ███ 
-    ███    ███ ▀███████████ ███   ███   ███ ███   ███ 
-    ███    ███   ███    ███ ███   ███   ███ ███   ███ 
-    ███   ▄███   ███    ███ ███   ███   ███ ███   ███ 
-    ████████▀    ███    █▀   ▀█   ███   █▀   ▀█   █▀                                                 
-
+    ████████▄     ▄████████   ▄▄▄▄███▄▄▄▄   ███▄▄▄▄
+    ███   ▀███   ███    ███ ▄██▀▀▀███▀▀▀██▄ ███▀▀▀██▄
+    ███    ███   ███    ███ ███   ███   ███ ███   ███
+    ███    ███   ███    ███ ███   ███   ███ ███   ███
+    ███    ███ ▀███████████ ███   ███   ███ ███   ███
+    ███    ███   ███    ███ ███   ███   ███ ███   ███
+    ███   ▄███   ███    ███ ███   ███   ███ ███   ███
+    ████████▀    ███    █▀   ▀█   ███   █▀   ▀█   █▀
 
 <br/><br/>
+
 <p align="center">
     <a href="https://github.com/discursus-data/damn/releases">
         <img src="https://img.shields.io/github/release/discursus-data/damn" alt="Latest release" />
@@ -29,11 +29,13 @@
 <br/><br/>
 
 # Data Asset Metrics Navigator
+
 The DAMN tool extracts and reports metrics about your data assets.
 
 It allows you to inspect your assets, lineage, and all sorts of metrics around materialization, usage, physical space usage and query performance. The objective of the DAMN tool is to give you a convenient command-line tool to track and report on the data assets you're working on.
 
 ## Installation
+
 To install the DAMN tool, run the following command:
 
 ```bash
@@ -42,15 +44,15 @@ pip install damn-tool
 
 <br/><br/>
 
-
 ## Connectors
+
 The DAMN tool leverages various connectors to interact with different service providers.
 
-
 ### Configurations
+
 Configuring these connectors is done via a YAML file located at `~/.damn/connectors.yml`. You can override the location of those connector configurations using the `--configs-dir` option.
 
-[*See example configuration file here*](connectors.yml.REPLACE)
+[_See example configuration file here_](connectors.yml.REPLACE)
 
 The configuration file uses the following structure:
 
@@ -65,9 +67,10 @@ connector_type:
 - service_provider: The name of the service provider for the connector. You can have multiple providers per connector.
 - param1, param2, etc.: The parameters needed for each connector. The required parameters will depend on the specific connector. For example, a Dagster connector might require endpoint and api_token.
 
-
 ### Connector types
+
 #### Orchestrator
+
 This is the default connector required by the DAMN tool. For now, we only support Dagster as the service provider for this connector. Here's an example configuration for an orchestrator connector with a dagster profile:
 
 ```yaml
@@ -78,6 +81,7 @@ orchestrator:
 ```
 
 #### IO Manager
+
 Your assets can be stored in storage services. For now, we only support the AWS storage service. This can be configured like this.
 
 ```yaml
@@ -92,7 +96,8 @@ io-manager:
 ```
 
 #### Data Warehouses
-Your assets can be materialized to a data warehouse. For now, we only support Snowflake. This can be configured like this.
+
+Your assets can be materialized to a data warehouse. For now, we support both Snowflake and BigQuery. This can be configured like this.
 
 ```yaml
 data-warehouse:
@@ -104,9 +109,14 @@ data-warehouse:
     database: my-database
     warehouse: my-warehouse
     schema: analytics
+
+  bigquery:
+    keyfile: "{{ env('GOOGLE_APPLICATION_CREDENTIALS') }}"
+    project: "XYZ"
 ```
 
 ### Switching Between Service Providers
+
 The active service provider for each connector can be changed by specifying the service provider when running DAMN commands. By default, DAMN will use the first service provider configured for each connector.
 
 Example usage:
@@ -117,18 +127,22 @@ damn ls --orchestrator dagster --io-manager aws --data-warehouse snowflake
 
 <br/><br/>
 
-
 ## Usage
+
 The DAMN tool is both a CLI tool and a python library.
 
 ### Output option
+
 Note that in CLI model, commands support an `output` option which allows flexibility in how the DAMN tool might be used:
+
 - `terminal`: By default, the output of commands will be printed to the terminal
 - `json`: You can also have the output as a `json` object, which is more useful if you're to use DAMN in a programmatic way.
 - `copy`: You can also copy the output to your clipboard, which is useful if you want to share an asset's metrics in a PR for example.
 
 ### List assets
+
 In python...
+
 ```python
 from damn_tool.ls import list_assets
 
@@ -137,6 +151,7 @@ print(result)
 ```
 
 From the command line...
+
 ```bash
 foo@bar:~$ damn ls
 ```
@@ -153,6 +168,7 @@ foo@bar:~$ damn ls
 
 List all assets for a specifc key group
 In python...
+
 ```python
 from damn_tool.ls import list_assets
 
@@ -161,6 +177,7 @@ print(result)
 ```
 
 From the command line...
+
 ```bash
 foo@bar:~$ damn ls --prefix gdelt
 ```
@@ -176,7 +193,9 @@ foo@bar:~$ damn ls --prefix gdelt
 ```
 
 ### Show details for a specific asset
+
 In python...
+
 ```python
 from damn_tool.show import show_asset
 
@@ -185,6 +204,7 @@ print(result)
 ```
 
 From the command line...
+
 ```bash
 foo@bar:~$ damn show gdelt/data_warehouse/integration/int__events_actors
 ```
@@ -218,7 +238,9 @@ From data warehouse:
 ```
 
 ### Show metrics for a specific asset
+
 In python...
+
 ```python
 from damn_tool.metrics import asset_metrics
 
@@ -227,6 +249,7 @@ print(result)
 ```
 
 From the command line...
+
 ```bash
 foo@bar:~$ damn metrics gdelt/gdelt_gkg_articles
 ```
@@ -252,12 +275,13 @@ From data warehouse:
 
 <br/><br/>
 
-
 ## Contribution
+
 Contributions to the DAMN tool are always welcome. Whether it's feature requests, bug fixes, or new features, your contribution is appreciated.
 
 <br/><br/>
 
-
 ## License
+
 The DAMN tool is open-source software, licensed under MIT.
+

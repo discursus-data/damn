@@ -2,7 +2,7 @@
 name = "damn-tool"
 version = "0.1.5"
 description = "The DAMN (Data Assets Metric Navigation) tool extracts and reports metrics about your data assets"
-authors = ["Olivier Dupuis <odupuis@lantrns.co>"]
+authors = ["Olivier Dupuis <olivier@republicofdata.io>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -17,6 +17,7 @@ boto3 = "^1.28.1"
 pyperclip = "^1.8.2"
 line-profiler = "^4.0.3"
 snowflake-connector-python = "^3.0.4"
+google-cloud-bigquery = "^3.27.0"
 
 [build-system]
 requires = ["poetry-core"]
